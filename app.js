@@ -6,6 +6,12 @@ $(document).ready( function() {
 		var tags = $(this).find("input[name='tags']").val();
 		getUnanswered(tags);
 	});
+	//<--- What I Wrote --->
+	$('.inspiration-getter').submit( function(event){
+		$('.results').html('');
+		var answerers = $(this).find("input[name='answerers']");
+		getTopAnswerer(answerers);
+	});
 });
 
 // this function takes the question object returned by StackOverflow 
@@ -13,6 +19,7 @@ $(document).ready( function() {
 var showQuestion = function(question) {
 	
 	// clone our result template code
+	//--- not understanding what happened here ---
 	var result = $('.templates .question').clone();
 	
 	// Set the question properties in result
@@ -41,6 +48,19 @@ var showQuestion = function(question) {
 	return result;
 };
 
+//--- What I Wrote to Show Top Answerers ---
+var showTopAnswerer = function(topAnswerer) {
+	var result = $('.templates .answerer').clone();
+
+	var answererName = result.find('.answerer-name');
+	answererName.html('<p>Name: <a target="_blank" href=http://stackoverflow.com/users/' + topAnswerer.user.user_id + ' >' +
+													topAnswerer.user.display_name + 
+												'</a>' + '</p>' +
+												'<p>Reputation: ' + topAnswerer.user.reputation + '</p>'	
+	);
+
+	return result;
+};
 
 // this function takes the results object from StackOverflow
 // and creates info about search results to be appended to DOM
@@ -61,7 +81,8 @@ var showError = function(error){
 var getUnanswered = function(tags) {
 	
 	// the parameters we need to pass in our request to StackOverflow's API
-	var request = {tagged: tags,
+	//--- where do I find this? ---
+	var request = {tagged: 'tags',
 								site: 'stackoverflow',
 								order: 'desc',
 								sort: 'creation'};
@@ -80,6 +101,35 @@ var getUnanswered = function(tags) {
 		$.each(result.items, function(i, item) {
 			var question = showQuestion(item);
 			$('.results').append(question);
+		});
+	})
+	.fail(function(jqXHR, error, errorThrown){
+		var errorElem = showError(error);
+		$('.search-results').append(errorElem);
+	});
+};
+
+var getTopAnswerer = function(answerers) {
+	var request = {
+		tagged: 'tags',
+		site: 'stackoverflow',
+		order: 'desc',
+		sort: 'creation'
+	};
+
+	var result = $.ajax({
+		url: "http://api.stackexchange.com/2.2/tags/java/top-answerers/all_time",
+		data: request,
+		dataType: "jsonp",
+		type: "GET",
+	})
+	.done(function(result){
+		var searchResults = showSearchResults(request.tagged, result.items.length);
+		$('.search-results').html(searchResults);
+
+		$.each(result.items, function(i, item){
+			var answers = showTopAnswerer(item);
+			$('.results').append(answers);
 		});
 	})
 	.fail(function(jqXHR, error, errorThrown){
