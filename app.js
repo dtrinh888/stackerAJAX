@@ -9,7 +9,7 @@ $(document).ready( function() {
 	//<--- What I Wrote --->
 	$('.inspiration-getter').submit( function(event){
 		$('.results').html('');
-		var answerers = $(this).find("input[name='answerers']");
+		var answerers = $(this).find("input[name='answerers']").val();
 		getTopAnswerer(answerers);
 	});
 });
