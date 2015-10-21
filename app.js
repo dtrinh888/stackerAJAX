@@ -82,7 +82,7 @@ var getUnanswered = function(tags) {
 	
 	// the parameters we need to pass in our request to StackOverflow's API
 	//--- where do I find this? ---
-	var request = {tagged: 'tags',
+	var request = {tagged: tags,
 								site: 'stackoverflow',
 								order: 'desc',
 								sort: 'creation'};
@@ -109,16 +109,13 @@ var getUnanswered = function(tags) {
 	});
 };
 
-var getTopAnswerer = function(answerers) {
+var getTopAnswerer = function(tags) {
 	var request = {
-		tagged: 'tags',
 		site: 'stackoverflow',
-		order: 'desc',
-		sort: 'creation'
 	};
 
 	var result = $.ajax({
-		url: "http://api.stackexchange.com/2.2/tags/java/top-answerers/all_time",
+		url: 'http://api.stackexchange.com//2.2/tags/'+tags+'/top-answerers/all_time',
 		data: request,
 		dataType: "jsonp",
 		type: "GET",
